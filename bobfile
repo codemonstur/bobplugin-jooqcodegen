@@ -1,6 +1,7 @@
 include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-lib-github
 
 enablePreview: false
+release: 11
 packaging: bob-plugin
 version: 3.17.6
 dependencies:

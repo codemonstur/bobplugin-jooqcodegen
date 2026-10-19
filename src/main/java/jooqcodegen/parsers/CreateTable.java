@@ -14,6 +14,7 @@ public final class CreateTable implements StatementParser {
     @Override
     public String convert(final String statement) {
         final int startIndex = statement.indexOf('(');
+        if (startIndex == -1) return statement + ";\n";
 
         final List<String> middle = new LinkedList<>();
         for (String clause : toClausesList(toClausesOnlySection(statement))) {
@@ -43,6 +44,7 @@ public final class CreateTable implements StatementParser {
     private static String toClausesOnlySection(final String createStatement) {
         final int startIndex = createStatement.indexOf('(');
         final int endIndex = createStatement.lastIndexOf(')');
+        if (startIndex == -1 || endIndex <= startIndex) return "";
         return createStatement.substring(startIndex+1, endIndex);
     }
 

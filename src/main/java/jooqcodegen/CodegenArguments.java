@@ -4,7 +4,7 @@ import jcli.annotations.CliCommand;
 import jcli.annotations.CliOption;
 import org.jooq.meta.jaxb.Logging;
 
-@CliCommand(name = "jooqcodegen", description = "A bob plugin that generates JOOQ code")
+@CliCommand(name = "jooq-codegen", description = "A bob plugin that generates JOOQ code")
 public class CodegenArguments {
 
     public static final String DEFAULT_INPUT_LOCATION = "src/main/resources/db/migration";

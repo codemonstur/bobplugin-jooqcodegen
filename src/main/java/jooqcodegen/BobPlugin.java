@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static bobthebuildtool.services.Functions.isNullOrEmpty;
 import static bobthebuildtool.services.Update.requireBobVersion;
@@ -41,11 +43,12 @@ public enum BobPlugin {;
 
         if (!isEnabled(project, arguments)) return 0;
 
+        final String generatedSourceDir = toGeneratedSourceDir(project, arguments);
         if (project.config.sourceDirectories.isEmpty()) {
-            project.config.sourceDirectories.add(toGeneratedSourceDir(project, arguments));
-            project.config.sourceDirectories.add("src" + File.separator + "main" + File.separator + "java");
+            addIfAbsent(project.config.sourceDirectories, generatedSourceDir);
+            addIfAbsent(project.config.sourceDirectories, "src" + File.separator + "main" + File.separator + "java");
         } else {
-            project.config.sourceDirectories.add(0, arguments.outputDir);
+            addIfAbsent(project.config.sourceDirectories, 0, generatedSourceDir);
         }
 
         String inputLocation = arguments.inputScript;
@@ -78,7 +81,7 @@ public enum BobPlugin {;
     }
     private static Path toOutputSchemaFile(final Project project, final CodegenArguments arguments) throws IOException {
         final Path outputFile = project.getBuildTarget().resolve(arguments.generationSqlFile);
-        if (exists(outputFile) && outputFile.toFile().delete())
+        if (exists(outputFile) && !outputFile.toFile().delete())
             throw new IOException("Generation SQL file exists and cannot be deleted");
         if (!exists(outputFile.getParent()) && !outputFile.getParent().toFile().mkdirs())
             throw new IOException("Could not create parent directories for generation SQL file");
@@ -90,10 +93,18 @@ public enum BobPlugin {;
     private static String toGeneratedSourceDir(final Project project, final CodegenArguments arguments) {
         return project.parentDir.relativize(project.getBuildTarget().resolve(arguments.outputDir)).toString();
     }
+    private static void addIfAbsent(final List<String> sourceDirectories, final String dir) {
+        if (!sourceDirectories.contains(dir)) sourceDirectories.add(dir);
+    }
+    private static void addIfAbsent(final List<String> sourceDirectories, final int index, final String dir) {
+        if (!sourceDirectories.contains(dir)) sourceDirectories.add(index, dir);
+    }
 
     private static void preProcessSql(final Path inputDir, final Path outputFile, final CodegenArguments arguments) throws IOException {
-        final String result = Arrays
-                .stream(Files.list(inputDir)
+        final String result;
+        try (Stream<Path> files = Files.list(inputDir)) {
+            result = Arrays
+                .stream(files
                 .filter(Files::isRegularFile)
                 .sorted(comparingInt(o -> toNumber(o.getFileName().toString())))
                 .flatMap(Functions::readAllLines)
@@ -103,11 +114,12 @@ public enum BobPlugin {;
                 .map(s -> s+" ")
                 .collect(joining())
                 .split(";"))
-            .filter(Objects::nonNull)
-            .map(String::trim)
-            .filter(trim -> !trim.isEmpty())
-            .map(Functions::toJooqSafeStatement)
-            .collect(joining());
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(trim -> !trim.isEmpty())
+                .map(Functions::toJooqSafeStatement)
+                .collect(joining());
+        }
 
         Files.writeString(outputFile, result, CREATE, TRUNCATE_EXISTING);
     }

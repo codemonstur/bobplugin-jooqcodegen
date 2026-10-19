@@ -54,15 +54,22 @@ public enum Functions {;
             if (input.charAt(i) == ',') return i;
 
             if (input.charAt(i) == '(')
-                i = unescapedIndexOf(input, ')', i+1) + 1;
+                i = skipPast(input, ')', i);
             else if (input.charAt(i) == '`')
-                i = unescapedIndexOf(input, '`', i+1) + 1;
+                i = skipPast(input, '`', i);
             else if (input.charAt(i) == '\'')
-                i = unescapedIndexOf(input, '\'',i+1) + 1;
+                i = skipPast(input, '\'', i);
             else
                 i = i + 1;
         }
         return i;
+    }
+
+    // Skips past the closing bracket that matches the opening one at position openIndex.
+    // Returns -1 when the bracket is unterminated (so no further separator can be found).
+    private static int skipPast(final String input, final char closing, final int openIndex) {
+        final int closingIndex = unescapedIndexOf(input, closing, openIndex + 1);
+        return closingIndex == -1 ? -1 : closingIndex + 1;
     }
 
     public static int unescapedIndexOf(final String input, final char c, final int offset) {
@@ -71,7 +78,7 @@ public enum Functions {;
             if (input.charAt(i) == c) return i;
             i = input.charAt(i) == '\\' ? i+2 : i+1;
         }
-        return i;
+        return -1;
     }
 
 }
