@@ -2,17 +2,17 @@ package jooqcodegen;
 
 import jooqcodegen.parsers.AlterTable;
 import jooqcodegen.parsers.CreateTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ParsersTest {
+class ParsersTest {
 
     private final CreateTable createTable = new CreateTable();
     private final AlterTable alterTable = new AlterTable();
 
     @Test
-    public void createTableHandlesUnterminatedParenthesis() {
+    void createTableHandlesUnterminatedParenthesis() {
         // Previously threw StringIndexOutOfBoundsException from findNextSeparator
         final String input = "CREATE TABLE `t` (col1 int, col2 int";
         // No closing paren, so the clause section is empty rather than blowing up
@@ -20,13 +20,13 @@ public class ParsersTest {
     }
 
     @Test
-    public void createTableHandlesMissingParenthesis() {
+    void createTableHandlesMissingParenthesis() {
         final String input = "CREATE TABLE `t`";
         assertEquals("CREATE TABLE `t`;\n", createTable.convert(input));
     }
 
     @Test
-    public void alterTableHandlesMissingClosingBacktick() {
+    void alterTableHandlesMissingClosingBacktick() {
         // Only one backtick, so convert bails out instead of throwing
         final String input = "ALTER TABLE `t MODIFY col INT";
         assertEquals(input + ";\n", alterTable.convert(input));
