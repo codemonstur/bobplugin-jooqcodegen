@@ -11,8 +11,17 @@ import java.util.stream.Stream;
 
 import static bobthebuildtool.services.Log.logWarning;
 
+/**
+ * The {@code Functions} enum.
+ */
 public enum Functions {;
 
+    /**
+     * Returns the result of {@code readAllLines}.
+     *
+     * @param path the path
+     * @return the result
+     */
     public static Stream<String> readAllLines(final Path path) {
         try {
             return Files.readAllLines(path).stream();
@@ -21,6 +30,12 @@ public enum Functions {;
         }
     }
 
+    /**
+     * Returns the result of {@code toNumber}.
+     *
+     * @param name the name
+     * @return the result
+     */
     public static int toNumber(final String name) {
         final int periodIndex = name.indexOf('.');
         final int underscoreIndex = name.indexOf("__");
@@ -39,6 +54,12 @@ public enum Functions {;
     private static final List<StatementParser> parsers = Arrays.asList(new ForeignKeyChecks()
             , new NameUTF8(), new CreateTable(), new AlterTable(), new DropTable(), new CreateIndex());
 
+    /**
+     * Returns the result of {@code toJooqSafeStatement}.
+     *
+     * @param statement the statement
+     * @return the result
+     */
     public static String toJooqSafeStatement(final String statement) {
         for (final StatementParser parser : parsers) {
             if (parser.matches(statement))
@@ -48,6 +69,13 @@ public enum Functions {;
         return statement;
     }
 
+    /**
+     * Returns the result of {@code findNextSeparator}.
+     *
+     * @param input the input
+     * @param offset the offset
+     * @return the result
+     */
     public static int findNextSeparator(final String input, final int offset) {
         int i = offset;
         while (i != -1 && i < input.length()) {
@@ -72,6 +100,14 @@ public enum Functions {;
         return closingIndex == -1 ? -1 : closingIndex + 1;
     }
 
+    /**
+     * Returns the result of {@code unescapedIndexOf}.
+     *
+     * @param input the input
+     * @param c the c
+     * @param offset the offset
+     * @return the result
+     */
     public static int unescapedIndexOf(final String input, final char c, final int offset) {
         int i = offset;
         while (i != -1 && i < input.length()) {

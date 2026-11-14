@@ -28,8 +28,17 @@ import static jcli.CliParserBuilder.newCliParser;
 import static jooqcodegen.CodegenArguments.DEFAULT_INPUT_LOCATION;
 import static jooqcodegen.Functions.toNumber;
 
+/**
+ * The {@code BobPlugin} enum.
+ */
 public enum BobPlugin {;
 
+    /**
+     * Performs the {@code installPlugin} operation.
+     *
+     * @param project the project
+     * @throws VersionTooOld if the operation fails
+     */
     public static void installPlugin(final Project project) throws VersionTooOld {
         requireBobVersion("7");
         project.addCommand("jooq-codegen", "Generates JOOQ code", BobPlugin::generateJooqCode);

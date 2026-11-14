@@ -4,13 +4,28 @@ import java.util.*;
 
 import static jooqcodegen.Functions.findNextSeparator;
 
+/**
+ * The {@code CreateTable} class.
+ */
 public final class CreateTable implements StatementParser {
 
+    /**
+     * Returns the result of {@code matches}.
+     *
+     * @param statement the statement
+     * @return whether the condition holds
+     */
     @Override
     public boolean matches(final String statement) {
         return statement.startsWith("CREATE TABLE ");
     }
 
+    /**
+     * Returns the result of {@code convert}.
+     *
+     * @param statement the statement
+     * @return the result
+     */
     @Override
     public String convert(final String statement) {
         final int startIndex = statement.indexOf('(');
@@ -48,6 +63,12 @@ public final class CreateTable implements StatementParser {
         return createStatement.substring(startIndex+1, endIndex);
     }
 
+    /**
+     * Returns the result of {@code toClausesList}.
+     *
+     * @param clauses the clauses
+     * @return the result
+     */
     public static List<String> toClausesList(final String clauses) {
         final List<String> ret = new ArrayList<>();
 
@@ -65,4 +86,10 @@ public final class CreateTable implements StatementParser {
         return ret;
     }
 
+
+    /**
+     * Creates a new instance.
+     */
+    public CreateTable() {
+    }
 }

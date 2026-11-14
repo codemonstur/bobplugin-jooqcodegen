@@ -6,13 +6,28 @@ import java.util.List;
 
 import static jooqcodegen.Functions.findNextSeparator;
 
+/**
+ * The {@code AlterTable} class.
+ */
 public final class AlterTable implements StatementParser {
 
+    /**
+     * Returns the result of {@code matches}.
+     *
+     * @param statement the statement
+     * @return whether the condition holds
+     */
     @Override
     public boolean matches(final String statement) {
         return statement.startsWith("ALTER TABLE `");
     }
 
+    /**
+     * Returns the result of {@code convert}.
+     *
+     * @param statement the statement
+     * @return the result
+     */
     @Override
     public String convert(final String statement) {
         // Remove the ALTER TABLE part
@@ -75,6 +90,12 @@ public final class AlterTable implements StatementParser {
         return clausesStart > statement.length() ? "" : statement.substring(clausesStart);
     }
 
+    /**
+     * Returns the result of {@code toClausesList}.
+     *
+     * @param clauses the clauses
+     * @return the result
+     */
     public static List<String> toClausesList(final String clauses) {
         final List<String> ret = new ArrayList<>();
 
@@ -92,4 +113,10 @@ public final class AlterTable implements StatementParser {
         return ret;
     }
 
+
+    /**
+     * Creates a new instance.
+     */
+    public AlterTable() {
+    }
 }
